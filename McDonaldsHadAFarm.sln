@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McDonaldsHadAFarm", "McDonaldsHadAFarm\McDonaldsHadAFarm.csproj", "{9BF207D4-8432-47B2-93D6-4286788AB54D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FarmLibrary", "FarmLibrary\FarmLibrary.csproj", "{EBC06034-20E0-4FB5-8975-C19B20099D38}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9BF207D4-8432-47B2-93D6-4286788AB54D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BF207D4-8432-47B2-93D6-4286788AB54D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BF207D4-8432-47B2-93D6-4286788AB54D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BF207D4-8432-47B2-93D6-4286788AB54D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBC06034-20E0-4FB5-8975-C19B20099D38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBC06034-20E0-4FB5-8975-C19B20099D38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBC06034-20E0-4FB5-8975-C19B20099D38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBC06034-20E0-4FB5-8975-C19B20099D38}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

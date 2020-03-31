@@ -1,10 +1,13 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows;
+using System.Windows.Data;
 using System.Xml;
 using FarmLibrary;
 using FarmLibrary.Animals;
@@ -19,16 +22,12 @@ namespace McDonaldsHadAFarm
   public partial class MainWindow : Window
   {
 
-    private Farm _farm;
+    public Farm Farm = new Farm();
     
     public MainWindow()
     {
-      List<Animal> animals = new List<Animal>();
-      animals.Add(new Chicken(DateTime.Now.AddMonths(-6)));
-      animals.Add(new Cow(DateTime.Now.AddYears(-8)));
-      animals.Add(new Sheep(DateTime.Now.AddYears(-2)));
-      _farm = new Farm(animals);
       InitializeComponent();
+      AnimalsListView.ItemsSource = Farm;
     }
 
     private void Load_OnClick(object sender, RoutedEventArgs e)
@@ -44,11 +43,87 @@ namespace McDonaldsHadAFarm
         LoadFromXml(filename);
       }
 
+      ICollectionView view = CollectionViewSource.GetDefaultView(AnimalsListView.ItemsSource);
+      view.Refresh();
     }
 
     private void LoadFromXml(string filename)
     {
-      XmlTextReader reader = new XmlTextReader(filename);
+      XmlTextReader? reader = null;
+      try
+      {
+        reader = new XmlTextReader(filename);
+        while (reader.Read())
+        {
+          if (reader.NodeType == XmlNodeType.Element)
+          {
+            switch (reader.Name)
+            {
+              case "Chicken": 
+              case "Cow": 
+              case "Sheep": 
+              case "Duck":
+                Animal? a = createFromXml(reader.ReadSubtree(), reader.Name);
+                if (a == null)
+                  throw new Exception("Data could not be loaded");
+                Farm.Animals.Add(a);
+                break;
+            }
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+      }
+      finally
+      {
+        if (reader != null)
+          reader.Close();
+      }
+    }
+
+    private Animal? createFromXml(XmlReader reader, string className)
+    {
+      DateTime birth = DateTime.Now;
+      int? totalProduced = null;
+      string? chipCode = null;
+      reader.Skip();
+      while (reader.Read())
+      {
+        if (reader.NodeType == XmlNodeType.Element)
+        {
+          switch (reader.Name)
+          {
+            case "Birth":
+              string dateString = reader.ReadElementContentAsString();
+              birth = DateTime.Parse(dateString);
+              break;
+            case "TotalProduced":
+              try
+              {
+                totalProduced = reader.ReadElementContentAsInt();
+              }
+              catch (FormatException)
+              {
+                totalProduced = null;
+              }
+              break;
+            case "ChipCode":
+              chipCode = reader.ReadElementContentAsString();
+              break;
+          }
+        }
+      }
+
+      switch (className)
+      {
+        case "Chicken": return new Chicken(birth, chipCode) {Product = {Type = Product.ProductType.Egg }, TotalProduced = totalProduced };
+        case "Cow": return new Cow(birth, chipCode) {Product = {Type = Product.ProductType.Milk }, TotalProduced = totalProduced };
+        case "Sheep": return new Sheep(birth, chipCode) {Product = {Type = Product.ProductType.Wool }, TotalProduced = totalProduced };
+        case "Duck": return new Duck(birth, chipCode) {Product = {Type = Product.ProductType.Feather }, TotalProduced = totalProduced };
+      }
+      return null;
     }
 
     private void Save_Click(object sender, RoutedEventArgs e)
@@ -79,13 +154,13 @@ namespace McDonaldsHadAFarm
       writer.WriteStartDocument();
       writer.WriteStartElement("Farm");
       writer.WriteStartElement("Name");
-      writer.WriteString(_farm.Name);
+      writer.WriteString(Farm.Name);
       writer.WriteEndElement();
       writer.WriteStartElement("Animals");
       writer.WriteStartAttribute("count");
-      writer.WriteString(_farm.Animals.Count.ToString());
+      writer.WriteString(Farm.Animals.Count.ToString());
       writer.WriteEndAttribute();
-      foreach (var animal in _farm.Animals)
+      foreach (var animal in Farm.Animals)
       {
         writer.WriteStartElement(animal.GetType().Name);
         foreach (PropertyInfo propertyInfo in animal.GetType().GetProperties())

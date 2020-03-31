@@ -10,7 +10,6 @@ namespace FarmLibrary.Animals
       if ((DateTime.Now - birth).TotalDays / 7 >= 53)
         Adult = true;
     }
-
     public override string WhatAmI()
     {
       return String.Format("I am a {0}", Adult ? "Sheep" : "Lamb");

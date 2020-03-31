@@ -10,4 +10,8 @@
       <ProjectReference Include="..\FarmLibrary\FarmLibrary.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="FarmView.cs" />
+    </ItemGroup>
+
 </Project>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
@@ -22,12 +23,20 @@ namespace McDonaldsHadAFarm
   public partial class MainWindow : Window
   {
 
-    public Farm Farm = new Farm();
-    
+    private Farm Farm = new Farm();
+
+    public List<Animal> Animals
+    {
+      get {
+        return Farm.Animals;
+      }
+    }
+
+    public Animal? SelectedAnimal { get; set; } = null;
     public MainWindow()
     {
       InitializeComponent();
-      AnimalsListView.ItemsSource = Farm;
+      DataContext = this;
     }
 
     private void Load_OnClick(object sender, RoutedEventArgs e)
@@ -43,13 +52,17 @@ namespace McDonaldsHadAFarm
         LoadFromXml(filename);
       }
 
-      ICollectionView view = CollectionViewSource.GetDefaultView(AnimalsListView.ItemsSource);
-      view.Refresh();
+      Farm.Animals.Sort((x, y) => DateTime.Compare(x.Birth, y.Birth));
+      AnimalsListView.Items.Refresh();
+      
+      // ICollectionView view = CollectionViewSource.GetDefaultView(AnimalsListView.ItemsSource);
+      // view.Refresh();
     }
 
     private void LoadFromXml(string filename)
     {
       XmlTextReader? reader = null;
+      Farm.Animals.Clear();
       try
       {
         reader = new XmlTextReader(filename);
@@ -180,12 +193,47 @@ namespace McDonaldsHadAFarm
 
     private void New_OnClick(object sender, RoutedEventArgs e)
     {
-      
+      AnimalWindow window = new AnimalWindow();
+      if (window.ShowDialog().HasValue)
+      {
+        if (window.Animal != null)
+          Farm.Animals.Add(window.Animal);
+      }
+      Farm.Animals.Sort((x, y) => DateTime.Compare(x.Birth, y.Birth));
+      AnimalsListView.Items.Refresh();
+    }
+
+    private void Delete_OnClick(object sender, RoutedEventArgs e)
+    {
+      if (SelectedAnimal != null)
+      {
+        Animals.Remove(SelectedAnimal);
+        AnimalsListView.Items.Refresh();
+      }
     }
 
     private void Edit_OnClick(object sender, RoutedEventArgs e)
     {
-      
+      if (SelectedAnimal != null)
+      {
+        AnimalWindow window = new AnimalWindow(SelectedAnimal);
+        if (window.ShowDialog().HasValue && window.Animal != null)
+        {
+          int index = Animals.IndexOf(SelectedAnimal); 
+          Farm[index] = window.Animal;
+          Farm.Animals.Sort((x, y) => DateTime.Compare(x.Birth, y.Birth));
+          AnimalsListView.Items.Refresh();
+        }
+      }
+    }
+
+    private void Produce_Click(object sender, RoutedEventArgs e)
+    {
+      foreach (Animal animal in Farm)
+      {
+        animal.Produce();
+      }
+      AnimalsListView.Items.Refresh();
       
     }
   }

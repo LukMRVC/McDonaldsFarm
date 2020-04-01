@@ -5,7 +5,6 @@ namespace FarmLibrary
 {
   public abstract class Animal
   {
-    
     public bool Adult { get; set; }
 
     public string? ChipCode { get; set; }
@@ -13,6 +12,15 @@ namespace FarmLibrary
     public Product Product { get; private set; }
     
     public int? TotalProduced { get; set; }
+
+    public string DisplayName
+    {
+      get { return ToString(); }
+      set
+      {
+        
+      }
+    }
 
     public DateTime Birth { get; private set; }
     protected Animal(Product.ProductType product, DateTime birth, string? chipCode = null)
@@ -36,10 +44,16 @@ namespace FarmLibrary
     }
     public virtual Product? Produce()
     {
-      IncreaseProduced();
       if (!Adult)
         return null;
+      IncreaseProduced();
       return Product;
+    }
+    
+    public override string ToString()
+    {
+      return String.Format("{4}, Product: {0}, Adult: {1}, Total produced: {2}, Chip: {3}",
+        Product, Adult ? "YES" : "NO" , TotalProduced, ChipCode, this.GetType().Name);
     }
   }
 }

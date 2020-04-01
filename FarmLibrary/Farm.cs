@@ -12,6 +12,7 @@ namespace FarmLibrary
     public List<Animal> Animals
     {
       get { return _animals; }
+      set { _animals = value;  }
     }
 
     public string Name { get; private set; }

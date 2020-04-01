@@ -11,8 +11,8 @@
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <ListView Grid.Column="0" x:Name="AnimalsListView">
-            
+        <ListView Grid.Column="0" x:Name="AnimalsListView" ItemsSource="{Binding Animals}" SelectedItem="{Binding SelectedAnimal}">
+           
         </ListView>
         <ScrollViewer Grid.Column="1" Padding="10">
             <StackPanel Orientation="Vertical">
@@ -24,8 +24,10 @@
                 </StackPanel.Resources>
                 <Button x:Name="Load" Click="Load_OnClick">Load from XML</Button>
                 <Button x:Name="Save" Click="Save_Click">Save</Button>
+                <Button x:Name="Produce" Click="Produce_Click">Produce</Button>
                 <Button x:Name="New" Click="New_OnClick">New Animal</Button>
-                <Button x:Name="Edit" Click="Edit_OnClick">Edit Animal</Button>
+                <Button x:Name="Edit" Click="Edit_OnClick">Edit selected</Button>
+                <Button x:Name="Delete" Click="Delete_OnClick">Delete selected</Button>
             </StackPanel>
         </ScrollViewer>
         
